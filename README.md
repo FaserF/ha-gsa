@@ -1,31 +1,37 @@
 [![hacs_badge](https://img.shields.io/badge/HACS-Custom-41BDF5.svg?style=for-the-badge)](https://github.com/hacs/integration)
-# Global Secure Access Client version Homeassistant Sensor
-The `global_secure_access_version` sensor will give you a sensor with the latest version available.
 
-## Installation
-### 1. Using HACS (recommended way)
+# Global Secure Access Client Sensor 🔒
 
-This integration is no official HACS Integration and right now an custom integration.
+The `global_secure_access_version` sensor provides the latest version of the [Microsoft Global Secure Access Client](https://learn.microsoft.com/en-us/entra/global-secure-access/reference-windows-client-release-history), allowing you to track update availability.
 
-Open HACS then install the "Microsoft Global Secure Access Version" integration or use the link below.
+## Features ✨
+
+- **Version Tracking**: Monitor the latest Windows client version.
+- **Update Notifications**: Get alerted when a new version works.
+
+## Installation 🛠️
+
+### 1. Using HACS (Recommended)
+
+This integration works as a **Custom Repository** in HACS.
+
+1.  Open HACS.
+2.  Add Custom Repository: `https://github.com/FaserF/ha-gsa` (Category: Integration).
+3.  Click **Download**.
 
 [![Open your Home Assistant instance and open a repository inside the Home Assistant Community Store.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=FaserF&repository=ha-gsa&category=integration)
 
-If you use this method, your component will always update to the latest version.
+### 2. Manual Installation
 
-### 2. Manual
+1.  Download the latest [Release](https://github.com/FaserF/ha-gsa/releases/latest).
+2.  Extract the ZIP file.
+3.  Copy the `gsa` folder to `<config>/custom_components/`.
 
-- Download the latest zip release from [here](https://github.com/FaserF/ha-gsa/releases/latest)
-- Extract the zip file
-- Copy the folder "gsa" from within custom_components with all of its components to `<config>/custom_components/`
+## Configuration ⚙️
 
-where `<config>` is your Home Assistant configuration directory.
-
->__NOTE__: Do not download the file by using the link above directly, the status in the "master" branch can be in development and therefore is maybe not working.
-
-## Configuration
-
-Go to Configuration -> Integrations and click on "add integration". Then search for "Microsoft Global Secure Access Version".
+1.  Go to **Settings** -> **Devices & Services**.
+2.  Click **Add Integration**.
+3.  Search for "Microsoft Global Secure Access Version".
 
 [![Open your Home Assistant instance and start setting up a new integration.](https://my.home-assistant.io/badges/config_flow_start.svg)](https://my.home-assistant.io/redirect/config_flow_start/?domain=gsa)
 
