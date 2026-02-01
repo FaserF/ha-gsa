@@ -9,5 +9,21 @@
     "abort": {
       "already_configured": "Device is already configured"
     }
+  },
+  "issues": {
+    "scraping_failure": {
+      "title": "Persistent Scraping Failure in Global Secure Access",
+      "description": "The integration has been unable to fetch the latest version information for over 24 hours. This usually means the Microsoft Learn website has changed its layout. Please open an issue on GitHub and provide your logs."
+    }
+  },
+  "entity": {
+    "sensor": {
+      "windows": {
+        "name": "Global Secure Access Client - Windows"
+      },
+      "macos": {
+        "name": "Global Secure Access Client - macOS"
+      }
+    }
   }
 }

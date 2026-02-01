@@ -1,82 +1,164 @@
 [![hacs_badge](https://img.shields.io/badge/HACS-Custom-41BDF5.svg?style=for-the-badge)](https://github.com/hacs/integration)
+![CI](https://github.com/FaserF/ha-gsa/actions/workflows/ci.yml/badge.svg)
 
-# Global Secure Access Client Sensor 🔒
+# Microsoft Global Secure Access Version Sensor 🔒
 
-The `global_secure_access_version` sensor provides the latest version of the [Microsoft Global Secure Access Client](https://learn.microsoft.com/en-us/entra/global-secure-access/reference-windows-client-release-history), allowing you to track update availability.
+This Home Assistant integration tracks the latest available versions of the Microsoft Global Secure Access Client for Windows and macOS by scraping the official Microsoft Learn release notes.
 
 ## Features ✨
 
-- **Version Tracking**: Monitor the latest Windows client version.
-- **Update Notifications**: Get alerted when a new version works.
+- **Multi-Platform Support**: Monitors versions for both Windows and macOS.
+- **Robust Scraping**: Uses a multi-layered approach to find version information even if the website layout changes slightly.
+- **Persistent Failure Detection**: Automatically detects if version information cannot be fetched for a prolonged period.
+- **Home Assistant Repairs**: If scraping fails for more than 24 hours, a Repair issue is created in Home Assistant with a link to report the problem on GitHub.
+- **Update Notifications Ready**: Easily set up automations to get notified as soon as a new version is released.
 
 ## Installation 🛠️
 
 ### 1. Using HACS (Recommended)
 
-This integration works as a **Custom Repository** in HACS.
-
-1.  Open HACS.
-2.  Add Custom Repository: `https://github.com/FaserF/ha-gsa` (Category: Integration).
-3.  Click **Download**.
-
-[![Open your Home Assistant instance and open a repository inside the Home Assistant Community Store.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=FaserF&repository=ha-gsa&category=integration)
+1. Ensure [HACS](https://hacs.xyz/) is installed.
+2. Go to **HACS** -> **Integrations**.
+3. Click the three dots in the top right corner and select **Custom repositories**.
+4. Add `https://github.com/FaserF/ha-gsa` with category `Integration`.
+5. Click **Add**.
+6. Find "Microsoft Global Secure Access Version" and click **Download**.
+7. Restart Home Assistant.
 
 ### 2. Manual Installation
 
-1.  Download the latest [Release](https://github.com/FaserF/ha-gsa/releases/latest).
-2.  Extract the ZIP file.
-3.  Copy the `gsa` folder to `<config>/custom_components/`.
+1. Download the latest release source code.
+2. Copy the `custom_components/global_secure_access_version` directory into your Home Assistant's `custom_components` folder.
+3. Restart Home Assistant.
 
 ## Configuration ⚙️
 
-1.  Go to **Settings** -> **Devices & Services**.
-2.  Click **Add Integration**.
-3.  Search for "Microsoft Global Secure Access Version".
+1. In Home Assistant, go to **Settings** -> **Devices & Services**.
+2. Click **Add Integration**.
+3. Search for **Microsoft Global Secure Access Version** and follow the prompts.
 
-[![Open your Home Assistant instance and start setting up a new integration.](https://my.home-assistant.io/badges/config_flow_start.svg)](https://my.home-assistant.io/redirect/config_flow_start/?domain=gsa)
+## Troubleshooting & Repairs 🛠️
 
-### Configuration Variables
-None needed.
-
-## Automations
-```yaml
-- id: 'gsa_new_version_notification_windows'
-  alias: 'GSA: New Version Available for Windows'
-  description: 'Notifies when the GSA version sensor changes to a valid state.'
-  trigger:
-    - platform: state
-      entity_id: sensor.global_secure_access_client_windows
-  condition:
-    - condition: template
-      value_template: "{{ trigger.to_state.state not in ['unknown', 'unavailable'] }}"
-    - condition: template
-      value_template: "{{ trigger.from_state.state not in ['unknown', 'unavailable'] }}"
-    - condition: template
-      value_template: "{{ trigger.to_state.state != trigger.from_state.state }}"
-  action:
-    - service: notify.mobile_app_your_device
-      data:
-        title: '🎉 New GSA Version Available for Windows!'
-        message: >
-          New version **{{ trigger.to_state.state }}** is now available!
-          (Previous version: {{ trigger.from_state.state }})
-        data:
-          url: "[https://learn.microsoft.com/en-us/entra/global-secure-access/reference-windows-client-release-history](https://learn.microsoft.com/en-us/entra/global-secure-access/reference-windows-client-release-history)"
-  mode: single
-```
-
-## Bug reporting
-Open an issue over at [github issues](https://github.com/FaserF/ha-gsa/issues). Please prefer sending over a log with debugging enabled.
-
-To enable debugging enter the following in your configuration.yaml
+### Troubleshooting
+If the sensors are showing `Unavailable`, first check your Home Assistant logs. You can enable debug logging for this integration:
 
 ```yaml
 logger:
-    logs:
-        custom_components.global_secure_access_version: debug
+  logs:
+    custom_components.global_secure_access_version: debug
 ```
 
-You can then find the log in the HA settings -> System -> Logs -> Enter "global_secure_access_version" in the search bar -> "Load full logs"
+### Repairs Integration
+This integration proactively monitors its own health. If Microsoft changes their website layout and the scraping logic fails consistently for **24 hours**, a notification will appear in your **Settings -> Repairs** section. This serves as a clear indicator that the integration needs an update, and it provides a direct link to open a GitHub issue.
 
-## Thanks to
-The data is coming from the corresponding [Microsoft Learn](https://learn.microsoft.com/en-us/entra/global-secure-access/reference-windows-client-release-history) website.
+## Automation Examples 🚀
+
+Hier sind einige ausführliche Beispiele, wie du diese Sensoren in deinen Automatisierungen verwenden kannst. Die Beispiele sind in `<details>` Blöcke eingeklappt, um das README übersichtlich zu halten.
+
+<details>
+<summary><b>1. Persistent Notification (In Home Assistant)</b></summary>
+
+Erstellt eine Benachrichtigung direkt in der Home Assistant Seitenleiste, inklusive Changelog.
+
+```yaml
+alias: "GSA: Neue Version Benachrichtigung"
+description: "Erstellt eine persistente Benachrichtigung bei GSA Updates"
+trigger:
+  - platform: state
+    entity_id:
+      - sensor.gsa_latest_version_windows
+      - sensor.gsa_latest_version_macos
+condition:
+  - condition: template
+    value_template: "{{ trigger.from_state.state not in ['unknown', 'unavailable'] }}"
+  - condition: template
+    value_template: "{{ trigger.to_state.state != trigger.from_state.state }}"
+action:
+  - service: notify.persistent_notification
+    data:
+      title: "Neue GSA Version: {{ trigger.to_state.name }}"
+      message: |
+        Eine neue Version des Global Secure Access Client ist verfügbar!
+
+        **Version:** {{ trigger.to_state.state }}
+        **Release-Datum:** {{ state_attr(trigger.entity_id, 'release_day') }}
+
+        **Changelog:**
+        {{ state_attr(trigger.entity_id, 'changelog') }}
+
+        [Zum Download / Changelog]({{ state_attr(trigger.entity_id, 'data_provided_by') }})
+```
+</details>
+
+<details>
+<summary><b>2. WhatsApp Benachrichtigung</b></summary>
+
+Sendet ein Update direkt auf dein Handy per WhatsApp.
+
+```yaml
+alias: "WhatsApp: GSA Update"
+trigger:
+  - platform: state
+    entity_id: sensor.gsa_latest_version_windows
+condition:
+  - condition: template
+    value_template: "{{ trigger.from_state.state not in ['unknown', 'unavailable'] }}"
+action:
+  - service: notify.whatsapp_me # Dein Service-Name kann variieren
+    data:
+      message: "🚀 Neue Global Secure Access Version für Windows: {{ states('sensor.gsa_latest_version_windows') }} (Kurs: {{ state_attr('sensor.gsa_latest_version_windows', 'release_day') }})"
+```
+</details>
+
+<details>
+<summary><b>3. Telegram Benachrichtigung (Mit HTML-Formatierung)</b></summary>
+
+Nutzt HTML für eine schicke Formatierung inklusive direktem Link zum Web-View.
+
+```yaml
+alias: "Telegram: GSA Version Update"
+trigger:
+  - platform: state
+    entity_id: sensor.gsa_latest_version_windows
+condition:
+  - condition: template
+    value_template: "{{ trigger.from_state.state not in ['unknown', 'unavailable'] }}"
+action:
+  - service: notify.telegram_bot # Dein Telegram Notify Service
+    data:
+      message: |
+        <b>🚀 Neues GSA Windows Update!</b>
+
+        Version: <code>{{ states('sensor.gsa_latest_version_windows') }}</code>
+        Datum: {{ state_attr('sensor.gsa_latest_version_windows', 'release_day') }}
+
+        <a href="{{ state_attr('sensor.gsa_latest_version_windows', 'data_provided_by') }}">🔗 Release Notes öffnen</a>
+```
+</details>
+
+<details>
+<summary><b>4. Mobile App Push (iOS/Android)</b></summary>
+
+Native Handy-Benachrichtigung, die beim Anklicken direkt die Microsoft-Releaseseite öffnet.
+
+```yaml
+alias: "Mobile: GSA Update Alarm"
+trigger:
+  - platform: state
+    entity_id: sensor.gsa_latest_version_windows
+action:
+  - service: notify.mobile_app_dein_handy
+    data:
+      title: "GSA Update verfügbar"
+      message: "Version {{ states('sensor.gsa_latest_version_windows') }} wurde veröffentlicht."
+      data:
+        url: "{{ state_attr('sensor.gsa_latest_version_windows', 'data_provided_by') }}"
+        clickAction: "{{ state_attr('sensor.gsa_latest_version_windows', 'data_provided_by') }}"
+```
+</details>
+
+## Contributions & Issues 🤝
+If you encounter any issues or have suggestions, please [open an issue](https://github.com/FaserF/ha-gsa/issues) on GitHub. Contributions are always welcome!
+
+---
+*Disclaimer: This integration is not an official Microsoft product. It relies on scraping public documentation.*

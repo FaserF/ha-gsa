@@ -1,4 +1,5 @@
 """Config flow for Microsoft Global Secure Access Version integration."""
+
 import logging
 from typing import Any
 
@@ -26,8 +27,12 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         self._abort_if_unique_id_configured()
 
         if user_input is not None:
-            _LOGGER.info("Setting up Microsoft Global Secure Access Version integration")
-            return self.async_create_entry(title="Microsoft Global Secure Access Version", data={})
+            _LOGGER.info(
+                "Setting up Microsoft Global Secure Access Version integration"
+            )
+            return self.async_create_entry(
+                title="Microsoft Global Secure Access Version", data={}
+            )
 
         return self.async_show_form(
             step_id="user",

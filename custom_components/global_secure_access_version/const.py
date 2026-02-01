@@ -10,6 +10,8 @@ MACOS_URL = "https://learn.microsoft.com/en-us/entra/global-secure-access/refere
 # Platforms
 PLATFORMS = ["sensor"]
 
-# Sensor names
-WINDOWS_SENSOR_NAME = "Global Secure Access Client - Windows"
-MACOS_SENSOR_NAME = "Global Secure Access Client - macOS"
+# Headers
+HEADERS = {
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36",
+    "Accept-Language": "en-US,en;q=0.9",
+}

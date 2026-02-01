@@ -1,4 +1,5 @@
 """The Microsoft Global Secure Access Version integration."""
+
 import logging
 
 from homeassistant.config_entries import ConfigEntry
@@ -30,9 +31,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Unload a config entry."""
     # Unload platforms
-    unload_ok = await hass.config_entries.async_unload_platforms(
-        entry, PLATFORMS
-    )
+    unload_ok = await hass.config_entries.async_unload_platforms(entry, PLATFORMS)
 
     # Remove the coordinator from hass.data
     if unload_ok:
