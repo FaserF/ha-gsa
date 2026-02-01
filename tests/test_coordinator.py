@@ -1,5 +1,5 @@
 import pytest
-from unittest.mock import AsyncMock, patch
+from unittest.mock import AsyncMock, patch, MagicMock
 from datetime import timedelta
 from homeassistant.util import dt as dt_util
 from custom_components.global_secure_access_version.coordinator import (
