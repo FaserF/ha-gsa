@@ -29,7 +29,9 @@ async def test_coordinator_update_success(mock_report_usage, hass_mock):
         mock_response = AsyncMock()
         mock_response.status = 200
         mock_response.text = AsyncMock(return_value=html_content)
-        mock_get.return_value = mock_response
+
+        # websession.get returns a context manager, so we mock __aenter__
+        mock_get.return_value.__aenter__.return_value = mock_response
 
         # We need to mock _scrape_version twice or mock the whole response text for each call
         # For simplicity in this test, we let it return the same content for both URLs
@@ -51,7 +53,8 @@ async def test_coordinator_repair_creation(mock_report_usage, hass_mock):
     coordinator.last_success = dt_util.utcnow() - timedelta(hours=25)
 
     with patch.object(coordinator.websession, "get") as mock_get:
-        mock_get.side_effect = Exception("Connection error")
+        # Mock __aenter__ to raise the exception
+        mock_get.return_value.__aenter__.side_effect = Exception("Connection error")
 
         with pytest.raises(Exception):
             await coordinator._async_update_data()

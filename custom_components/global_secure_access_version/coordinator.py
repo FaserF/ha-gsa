@@ -83,9 +83,9 @@ class GlobalSecureAccessDataUpdateCoordinator(DataUpdateCoordinator):
         """Scrape the latest release information from a given URL."""
         _LOGGER.debug("Scraping release info from %s", url)
         try:
-            response = await self.websession.get(url, headers=HEADERS)
-            response.raise_for_status()
-            html_content = await response.text()
+            async with self.websession.get(url, headers=HEADERS) as response:
+                response.raise_for_status()
+                html_content = await response.text()
         except Exception as err:
             _LOGGER.warning("Could not fetch %s: %s", url, err)
             return None
