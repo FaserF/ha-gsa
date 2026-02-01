@@ -14,7 +14,7 @@ def hass_mock():
     return hass
 
 
-@patch("homeassistant.helpers.update_coordinator.frame.report_usage")
+@patch("homeassistant.helpers.frame.report_usage")
 async def test_coordinator_update_success(mock_report_usage, hass_mock):
     coordinator = GlobalSecureAccessDataUpdateCoordinator(hass_mock)
 
@@ -43,7 +43,7 @@ async def test_coordinator_update_success(mock_report_usage, hass_mock):
         )  # This is internal HA state usually
 
 
-@patch("homeassistant.helpers.update_coordinator.frame.report_usage")
+@patch("homeassistant.helpers.frame.report_usage")
 async def test_coordinator_repair_creation(mock_report_usage, hass_mock):
     coordinator = GlobalSecureAccessDataUpdateCoordinator(hass_mock)
 
