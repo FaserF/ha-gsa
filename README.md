@@ -53,16 +53,16 @@ This integration proactively monitors its own health. If Microsoft changes their
 
 ## Automation Examples 🚀
 
-Hier sind einige ausführliche Beispiele, wie du diese Sensoren in deinen Automatisierungen verwenden kannst. Die Beispiele sind in `<details>` Blöcke eingeklappt, um das README übersichtlich zu halten.
+Here are some detailed examples of how to use these sensors in your automations. The examples are collapsed in `<details>` blocks to keep the README clean.
 
 <details>
 <summary><b>1. Persistent Notification (In Home Assistant)</b></summary>
 
-Erstellt eine Benachrichtigung direkt in der Home Assistant Seitenleiste, inklusive Changelog.
+Creates a notification directly in the Home Assistant sidebar, including the changelog.
 
 ```yaml
-alias: "GSA: Neue Version Benachrichtigung"
-description: "Erstellt eine persistente Benachrichtigung bei GSA Updates"
+alias: "GSA: New Version Notification"
+description: "Creates a persistent notification for GSA updates"
 trigger:
   - platform: state
     entity_id:
@@ -76,24 +76,24 @@ condition:
 action:
   - service: notify.persistent_notification
     data:
-      title: "Neue GSA Version: {{ trigger.to_state.name }}"
+      title: "New GSA Version: {{ trigger.to_state.name }}"
       message: |
-        Eine neue Version des Global Secure Access Client ist verfügbar!
+        A new version of the Global Secure Access Client is available!
 
         **Version:** {{ trigger.to_state.state }}
-        **Release-Datum:** {{ state_attr(trigger.entity_id, 'release_day') }}
+        **Release Date:** {{ state_attr(trigger.entity_id, 'release_day') }}
 
         **Changelog:**
         {{ state_attr(trigger.entity_id, 'changelog') }}
 
-        [Zum Download / Changelog]({{ state_attr(trigger.entity_id, 'data_provided_by') }})
+        [Download / Changelog]({{ state_attr(trigger.entity_id, 'data_provided_by') }})
 ```
 </details>
 
 <details>
-<summary><b>2. WhatsApp Benachrichtigung</b></summary>
+<summary><b>2. WhatsApp Notification</b></summary>
 
-Sendet ein Update direkt auf dein Handy per WhatsApp.
+Sends an update directly to your phone via WhatsApp.
 
 ```yaml
 alias: "WhatsApp: GSA Update"
@@ -104,16 +104,16 @@ condition:
   - condition: template
     value_template: "{{ trigger.from_state.state not in ['unknown', 'unavailable'] }}"
 action:
-  - service: notify.whatsapp_me # Dein Service-Name kann variieren
+  - service: notify.whatsapp_me # Your service name may vary
     data:
-      message: "🚀 Neue Global Secure Access Version für Windows: {{ states('sensor.gsa_latest_version_windows') }} (Kurs: {{ state_attr('sensor.gsa_latest_version_windows', 'release_day') }})"
+      message: "🚀 New Global Secure Access Version for Windows: {{ states('sensor.gsa_latest_version_windows') }} (Date: {{ state_attr('sensor.gsa_latest_version_windows', 'release_day') }})"
 ```
 </details>
 
 <details>
-<summary><b>3. Telegram Benachrichtigung (Mit HTML-Formatierung)</b></summary>
+<summary><b>3. Telegram Notification (With HTML Formatting)</b></summary>
 
-Nutzt HTML für eine schicke Formatierung inklusive direktem Link zum Web-View.
+Uses HTML for nice formatting including a direct link to the web view.
 
 ```yaml
 alias: "Telegram: GSA Version Update"
@@ -124,22 +124,22 @@ condition:
   - condition: template
     value_template: "{{ trigger.from_state.state not in ['unknown', 'unavailable'] }}"
 action:
-  - service: notify.telegram_bot # Dein Telegram Notify Service
+  - service: notify.telegram_bot # Your Telegram Notify Service
     data:
       message: |
-        <b>🚀 Neues GSA Windows Update!</b>
+        <b>🚀 New GSA Windows Update!</b>
 
         Version: <code>{{ states('sensor.gsa_latest_version_windows') }}</code>
-        Datum: {{ state_attr('sensor.gsa_latest_version_windows', 'release_day') }}
+        Date: {{ state_attr('sensor.gsa_latest_version_windows', 'release_day') }}
 
-        <a href="{{ state_attr('sensor.gsa_latest_version_windows', 'data_provided_by') }}">🔗 Release Notes öffnen</a>
+        <a href="{{ state_attr('sensor.gsa_latest_version_windows', 'data_provided_by') }}">🔗 Open Release Notes</a>
 ```
 </details>
 
 <details>
 <summary><b>4. Mobile App Push (iOS/Android)</b></summary>
 
-Native Handy-Benachrichtigung, die beim Anklicken direkt die Microsoft-Releaseseite öffnet.
+Native mobile notification that opens the Microsoft release page directly when clicked.
 
 ```yaml
 alias: "Mobile: GSA Update Alarm"
@@ -147,10 +147,10 @@ trigger:
   - platform: state
     entity_id: sensor.gsa_latest_version_windows
 action:
-  - service: notify.mobile_app_dein_handy
+  - service: notify.mobile_app_your_phone
     data:
-      title: "GSA Update verfügbar"
-      message: "Version {{ states('sensor.gsa_latest_version_windows') }} wurde veröffentlicht."
+      title: "GSA Update Available"
+      message: "Version {{ states('sensor.gsa_latest_version_windows') }} has been released."
       data:
         url: "{{ state_attr('sensor.gsa_latest_version_windows', 'data_provided_by') }}"
         clickAction: "{{ state_attr('sensor.gsa_latest_version_windows', 'data_provided_by') }}"
