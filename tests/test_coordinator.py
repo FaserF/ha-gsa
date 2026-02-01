@@ -10,6 +10,10 @@ from custom_components.global_secure_access_version.coordinator import (
 @pytest.fixture
 def hass_mock():
     hass = AsyncMock()
+    # Mock synchronous methods to avoid RuntimeWarning for unawaited coroutines
+    hass.bus.async_listen_once = MagicMock()
+    hass.verify_event_loop_thread = MagicMock()
+    hass.loop.time = MagicMock(return_value=1000.0)
     hass.data = {}
     return hass
 
@@ -28,6 +32,8 @@ async def test_coordinator_update_success(mock_report_usage, hass_mock):
     with patch.object(coordinator.websession, "get") as mock_get:
         mock_response = AsyncMock()
         mock_response.status = 200
+        # raise_for_status is synchronous in aiohttp
+        mock_response.raise_for_status = MagicMock()
         mock_response.text = AsyncMock(return_value=html_content)
 
         # websession.get returns a context manager, so we mock __aenter__
@@ -38,8 +44,8 @@ async def test_coordinator_update_success(mock_report_usage, hass_mock):
 
         data = await coordinator._async_update_data()
 
-        assert data["windows"] == "2.24.117"
-        assert data["macos"] == "2.24.117"  # Since we returned same HTML
+        assert data["windows"]["version"] == "2.24.117"
+        assert data["macos"]["version"] == "2.24.117"  # Since we returned same HTML
         assert (
             coordinator.last_update_success is True
         )  # This is internal HA state usually
