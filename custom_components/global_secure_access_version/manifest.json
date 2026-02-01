@@ -2,7 +2,6 @@
   "domain": "global_secure_access_version",
   "name": "Microsoft Global Secure Access Version",
   "config_flow": true,
-  "configuration_url": "https://learn.microsoft.com/en-us/entra/global-secure-access/reference-windows-client-release-history",
   "documentation": "https://github.com/FaserF/ha-gsa",
   "iot_class": "cloud_polling",
   "issue_tracker": "https://github.com/FaserF/ha-gsa/issues",
